@@ -5,8 +5,8 @@
     <breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu">
-      <el-dropdown class="avatar-container" trigger="click" @command="handleDropDownCommand">
-        <div class="avatar-wrapper">
+      <el-dropdown class="username-container" trigger="click" @command="handleDropDownCommand">
+        <div class="username-wrapper">
           <div>{{ name }}</div>
           <i class="el-icon-caret-bottom" />
         </div>
@@ -103,26 +103,16 @@ export default {
       }
     }
 
-    .avatar-container {
+    .username-container {
+      cursor: pointer;
       margin-right: 30px;
-
-      .avatar-wrapper {
-        margin-top: 5px;
+      .username-wrapper {
         position: relative;
-
-        .user-avatar {
-          cursor: pointer;
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
-        }
-
         .el-icon-caret-bottom {
-          cursor: pointer;
           position: absolute;
           right: -20px;
-          top: 25px;
-          font-size: 12px;
+          top: 19px;
+          font-size: 14px;
         }
       }
     }

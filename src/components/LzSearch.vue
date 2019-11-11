@@ -1,7 +1,7 @@
 <template>
   <div class="lz-search">
     <el-form :inline="true" :model="query" class="demo-form-inline">
-      <el-form-item v-for="item in config" :label="item.label" :key="item.key">
+      <el-form-item v-for="item in config" :key="item.key" :label="item.label">
         <component :is="item.type==='select'?'lz-select':'el-'+ item.type"
                    v-model="query[item.key]"
                    v-bind="item.attrs" :placeholder="item.label"

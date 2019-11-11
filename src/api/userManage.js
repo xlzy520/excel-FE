@@ -1,8 +1,8 @@
 import service from './service'
 
 export default {
-  addUser() {
-    return service('/user/add')
+  addUser(data) {
+    return service('/user/add', data)
   },
   getUserList(data) {
     return service('/user/list', data)
@@ -10,10 +10,7 @@ export default {
   deleteUser(data) {
     return service('/user/delete', data)
   },
-  resetUserPassword(data) {
-    return service('/user/resetPassword', data)
-  },
-  logout() {
-    return service('/logout')
+  updateUser(data) {
+    return service('/user/update', data)
   }
 }

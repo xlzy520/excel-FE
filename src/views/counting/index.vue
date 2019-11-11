@@ -1,77 +1,87 @@
 <template>
   <div class="app-container">
-    <el-table
-      v-loading="listLoading"
-      :data="list"
-      element-loading-text="Loading"
-      border
-      fit
-      highlight-current-row
-    >
-      <el-table-column align="center" label="ID" width="95">
-        <template slot-scope="scope">
-          {{ scope.$index }}
-        </template>
-      </el-table-column>
-      <el-table-column label="Title">
-        <template slot-scope="scope">
-          {{ scope.row.title }}
-        </template>
-      </el-table-column>
-      <el-table-column label="Author" width="110" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.author }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Pageviews" width="110" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.pageviews }}
-        </template>
-      </el-table-column>
-      <el-table-column class-name="status-col" label="Status" width="110" align="center">
-        <template slot-scope="scope">
-          <el-tag :type="scope.row.status | statusFilter">{{ scope.row.status }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" prop="created_at" label="Display_time" width="200">
-        <template slot-scope="scope">
-          <i class="el-icon-time" />
-          <span>{{ scope.row.display_time }}</span>
-        </template>
-      </el-table-column>
-    </el-table>
+    <div class="header">
+      <lz-search ref="search" :config="searchConfig" @search="search"/>
+    </div>
+    <lz-table ref="table"
+              :data="tableData"
+              :columns="tableColumns"
+              :total="total"
+              :loading="loading"
+              @update-data="getList">
+    </lz-table>
+    <counting-dialog v-if="visible" ref="dialog" @close="close"></counting-dialog>
   </div>
 </template>
 
 <script>
-import { getList } from '@/api/table'
+import countingDialog from './countingDialog'
+import templateApi from '@/api/template'
 
 export default {
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'gray',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    }
+  components: {
+    countingDialog
   },
   data() {
     return {
-      list: null,
-      listLoading: true
+      searchConfig: [
+        { label: '项目名称', key: 'name', type: 'input' }
+      ],
+      tableData: [],
+      tableColumns: [
+        { label: '项目名称', prop: 'name' },
+        { label: '总人数', prop: 'total' },
+        { label: '创建时间', prop: 'createDate' },
+        { label: '修改时间', prop: 'modifyDate' },
+        {
+          label: '操作', prop: 'operation',
+          render: (h, { props: { row }}) => {
+            return (
+              <div class='td-btn-group'>
+                <a onClick={() => this.view(row)}>查看</a>
+                <span></span>
+                <a onClick={() => this.download(row)}>导出</a>
+              </div>
+            )
+          }
+        }
+      ],
+      total: 0,
+      loading: false,
+      visible: false
     }
   },
-  created() {
-    this.fetchData()
+  mounted() {
+    this.toSearch()
   },
   methods: {
-    fetchData() {
-      this.listLoading = true
-      getList().then(response => {
-        this.list = response.data.items
-        this.listLoading = false
+    view(row) {
+      this.visible = true
+      this.$nextTick(() => {
+        this.$refs.dialog.open(row)
+      })
+    },
+    close() {
+      this.visible = false
+    },
+    search(query) {
+      this.searchData = query
+      this.$refs.table.changePage(1)
+    },
+    download(row) {
+      this.$methods.fileDownload(row.url)
+    },
+    toSearch() {
+      this.$refs.search.search()
+    },
+    getList(page) {
+      this.loading = true
+      const post = { ...this.searchData, ...page }
+      templateApi.getTemplateList(post).then(res => {
+        this.tableData = res.list || []
+        this.total = res.total
+      }).finally(() => {
+        this.loading = false
       })
     }
   }

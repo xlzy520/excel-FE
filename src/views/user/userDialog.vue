@@ -16,16 +16,17 @@ export default {
       formData: {},
       formOptions: [
         {
-          type: 'select',
+          type: 'input',
           formItem: {
             prop: 'school',
             label: '学校',
             rules: [
-              this.$methods.required('请选择学校')
+              this.$methods.required('请输入学校'),
+              this.$methods.inputLength(3, 20)
             ]
           },
           attrs: {
-            options: this.$enum.grade
+            maxlength: 20
           }
         },
         {
@@ -98,8 +99,10 @@ export default {
     confirm() {
       this.$refs.form.validate(() => {
         this.loading = true
-        userManage.addUser(this.formData).then(res => {
-          this.$message(this.dialogTypeIsAdd ? '添加' : '编辑' + '成功')
+        const post = this.dialogTypeIsAdd ? { request: userManage.addUser, msg: '添加' }
+          : { request: userManage.updateUser, msg: '编辑' }
+        post.request(this.formData).then(res => {
+          this.$message(post.msg + '成功')
           this.close()
         }).finally(() => {
           this.loading = false
@@ -109,6 +112,7 @@ export default {
     close() {
       this.$refs.dialog.close()
       this.$emit('close')
+      this.formData = {}
     }
   }
 }

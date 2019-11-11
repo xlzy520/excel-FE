@@ -10,10 +10,10 @@
               :loading="loading"
               @update-data="getList">
       <div slot="btn">
-        <el-button type="primary" @click="open(true)">新增</el-button>
+        <el-button type="primary" @click="open(true)">新增用户</el-button>
       </div>
     </lz-table>
-    <user-dialog v-if="visible" ref="dialog" @close="close" @confirm="toSearch"></user-dialog>
+    <user-dialog v-if="visible" ref="dialog" @confirm="toSearch" @close="close"></user-dialog>
   </div>
 </template>
 
@@ -30,13 +30,15 @@ export default {
       searchConfig: [
         { label: '用户名', key: 'username', type: 'input' },
         { label: '学校', key: 'school', type: 'input' },
-        { label: '学段', key: 'grade', type: 'select', attrs: { options: this.$enum.grade }}
+        { label: '学段', key: 'grade', type: 'select', attrs: { default: '', options: this.$enum.grade }}
       ],
       tableData: [],
       tableColumns: [
         { label: '用户名', prop: 'username' },
         { label: '学校', prop: 'school' },
-        { label: '学段', prop: 'grade' },
+        { label: '学段', prop: 'grade', formatter: row => {
+          return this.$enum.grade.find(v => row.grade === v.value).label
+        } },
         { label: '手机', prop: 'phone' },
         { label: '创建时间', prop: 'createDate' },
         { label: '修改时间', prop: 'modifyDate' },
@@ -48,7 +50,7 @@ export default {
               <div class='td-btn-group'>
                 <a onClick={() => this.delete(row)}>删除</a>
                 <span></span>
-                <a onClick={() => this.open(false, row)}>重置</a>
+                <a onClick={() => this.open(false, row)}>编辑</a>
               </div>
             )
           }
@@ -68,6 +70,9 @@ export default {
       this.$nextTick(() => {
         this.$refs.dialog.open(isAdd, row)
       })
+    },
+    close() {
+      this.visible = false
     },
     search(query) {
       this.searchData = query

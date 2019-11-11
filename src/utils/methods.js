@@ -98,6 +98,9 @@ export default {
   required(tip) {
     return { required: true, message: '请输入' + tip }
   },
+  inputLength(min, max, method = 'blur') {
+    return { min: min, max: max, message: `长度在 ${min} 到 ${max} 个字符`, trigger: method }
+  },
   checkType(val, type) {
     if (Array.isArray(type)) {
       return type.some(t => Object.prototype.toString.call(val) === `[object ${t}]`)
@@ -176,5 +179,13 @@ export default {
         }
       })
     })
+  },
+  fileDownload(href) {
+    var eleLink = document.createElement('a')
+    eleLink.style.display = 'none'
+    eleLink.href = href
+    document.body.appendChild(eleLink)
+    eleLink.click()
+    document.body.removeChild(eleLink)
   }
 }

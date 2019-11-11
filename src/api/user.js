@@ -9,5 +9,8 @@ export default {
   },
   logout() {
     return service('/logout')
+  },
+  resetUserPassword(data) {
+    return service('/user/resetPassword', data)
   }
 }

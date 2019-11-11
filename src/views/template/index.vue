@@ -10,34 +10,33 @@
               :loading="loading"
               @update-data="getList">
       <div slot="btn">
-        <el-button type="primary" @click="open(true)">新增</el-button>
+        <el-button type="primary" @click="open(true)">新增模板</el-button>
       </div>
     </lz-table>
-    <user-dialog v-if="visible" ref="dialog" @close="close" @confirm="toSearch"></user-dialog>
+    <template-dialog v-if="visible" ref="dialog" @confirm="toSearch" @close="close"></template-dialog>
   </div>
 </template>
 
 <script>
-import userManage from '@/api/userManage'
-import UserDialog from '@/views/user/userDialog'
+import templateApi from '@/api/template'
+import templateDialog from '@/views/template/templateDialog'
 
 export default {
   components: {
-    UserDialog
+    templateDialog
   },
   data() {
     return {
       searchConfig: [
-        { label: '用户名', key: 'username', type: 'input' },
-        { label: '学校', key: 'school', type: 'input' },
+        { label: '名称', key: 'name', type: 'input' },
         { label: '学段', key: 'grade', type: 'select', attrs: { options: this.$enum.grade }}
       ],
       tableData: [],
       tableColumns: [
-        { label: '用户名', prop: 'username' },
-        { label: '学校', prop: 'school' },
-        { label: '学段', prop: 'grade' },
-        { label: '手机', prop: 'phone' },
+        { label: '名称', prop: 'name' },
+        { label: '学段', prop: 'grade', formatter: row => {
+          return this.$enum.grade.find(v => row.grade === v.value).label
+        } },
         { label: '创建时间', prop: 'createDate' },
         { label: '修改时间', prop: 'modifyDate' },
         // { label: '备注', prop: 'mark' },
@@ -48,7 +47,9 @@ export default {
               <div class='td-btn-group'>
                 <a onClick={() => this.delete(row)}>删除</a>
                 <span></span>
-                <a onClick={() => this.open(false, row)}>重置</a>
+                <a onClick={() => this.download(row)}>下载</a>
+                <span></span>
+                <a onClick={() => this.open(false, row)}>编辑</a>
               </div>
             )
           }
@@ -69,17 +70,23 @@ export default {
         this.$refs.dialog.open(isAdd, row)
       })
     },
+    close() {
+      this.visible = false
+    },
     search(query) {
       this.searchData = query
       this.$refs.table.changePage(1)
     },
     delete(row) {
-      this.$methods.tipBox(`确定删除该条内容吗？`, () => {
-        userManage.deleteUser(row.id).then(() => {
+      this.$methods.tipBox(`确定删除该模板吗？`, () => {
+        templateApi.deleteTemplate(row.id).then(() => {
           this.$message(`删除成功`)
           this.toSearch()
         })
       })
+    },
+    download(row) {
+      this.$methods.fileDownload(row.url)
     },
     toSearch() {
       this.$refs.search.search()
@@ -87,7 +94,7 @@ export default {
     getList(page) {
       this.loading = true
       const post = { ...this.searchData, ...page }
-      userManage.getUserList(post).then(res => {
+      templateApi.getTemplateList(post).then(res => {
         this.tableData = res.list || []
         this.total = res.total
       }).finally(() => {

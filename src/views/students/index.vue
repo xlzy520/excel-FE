@@ -11,6 +11,7 @@
               @update-data="getList">
       <div slot="btn">
         <el-button type="primary" @click="open(true)">新增</el-button>
+        <el-button type="primary" @click="exportExcel">导出</el-button>
       </div>
     </lz-table>
     <user-dialog v-if="visible" ref="dialog" @close="close" @confirm="toSearch"></user-dialog>
@@ -18,7 +19,7 @@
 </template>
 
 <script>
-import userManage from '@/api/userManage'
+import studentsApi from '@/api/students'
 import UserDialog from '@/views/user/userDialog'
 
 export default {
@@ -28,7 +29,7 @@ export default {
   data() {
     return {
       searchConfig: [
-        { label: '用户名', key: 'username', type: 'input' },
+        { label: '项目名', key: 'username', type: 'input' },
         { label: '学校', key: 'school', type: 'input' },
         { label: '学段', key: 'grade', type: 'select', attrs: { options: this.$enum.grade }}
       ],
@@ -75,11 +76,14 @@ export default {
     },
     delete(row) {
       this.$methods.tipBox(`确定删除该条内容吗？`, () => {
-        userManage.deleteUser(row.id).then(() => {
+        studentsApi.deleteStudent(row.id).then(() => {
           this.$message(`删除成功`)
           this.toSearch()
         })
       })
+    },
+    exportExcel() {
+
     },
     toSearch() {
       this.$refs.search.search()
@@ -87,7 +91,7 @@ export default {
     getList(page) {
       this.loading = true
       const post = { ...this.searchData, ...page }
-      userManage.getUserList(post).then(res => {
+      studentsApi.getStudentList(post).then(res => {
         this.tableData = res.list || []
         this.total = res.total
       }).finally(() => {
