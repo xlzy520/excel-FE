@@ -16,6 +16,7 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
+    <change-password v-if="visible" ref="dialog"></change-password>
   </div>
 </template>
 
@@ -23,11 +24,13 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import changePassword from './changePassword'
 
 export default {
   components: {
     Breadcrumb,
-    Hamburger
+    Hamburger,
+    changePassword
   },
   computed: {
     ...mapGetters([
@@ -35,10 +38,18 @@ export default {
       'name'
     ])
   },
+  data() {
+    return {
+      visible: false
+    }
+  },
   methods: {
     handleDropDownCommand(cmd) {
       if (cmd === 'logout') this.logout()
-      if (cmd === 'changePassword') this.$router.push('/changePassword')
+      if (cmd === 'changePassword') {
+        this.visible = true
+        this.$refs.dialog.open()
+      }
     },
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')

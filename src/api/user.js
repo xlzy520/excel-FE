@@ -10,7 +10,7 @@ export default {
   logout() {
     return service('/logout')
   },
-  resetUserPassword(data) {
-    return service('/user/resetPassword', data)
+  changePassword(data) {
+    return service('/user/changePassword', data)
   }
 }
