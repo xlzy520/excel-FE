@@ -20,7 +20,7 @@
           </lz-table>
         </el-tab-pane>
         <el-tab-pane label="图表查看" name="2">
-          <chart-view ref="chart" :data="chartData"></chart-view>
+          <chart-view ref="chart" :data="chartData" :total="totalCount"></chart-view>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -41,7 +41,7 @@ export default {
       activeTab: '1',
       chartData: [],
       tableColumns: [
-        { label: '学校名称', prop: 'name' },
+        { label: '学校名称', prop: 'school' },
         { label: '人数', prop: 'total' },
         { label: '创建时间', prop: 'createDate' },
         { label: '修改时间', prop: 'modifyDate' }
