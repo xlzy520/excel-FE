@@ -84,24 +84,25 @@ export default {
   },
   data() {
     return {
-      // 处理后的表头数据
-      showColumns: [],
       pageNo: 1,
       pageSize: this.defaultPageSize || (this.pageSizeList && this.pageSizeList[0]) || 15
     }
   },
+  computed: {
+    showColumns() {
+      return this.columns.filter(v => !v.hidden).map(col => {
+        const temp = defaultComponent()
+        if (col.render) {
+          temp.render = col.render
+        }
+        return {
+          ...col,
+          component: temp
+        }
+      })
+    }
+  },
   mounted() {
-    // 处理表头数据
-    this.showColumns = this.columns.filter(v => !v.hidden).map(col => {
-      const temp = defaultComponent()
-      if (col.render) {
-        temp.render = col.render
-      }
-      return {
-        ...col,
-        component: temp
-      }
-    })
   },
   methods: {
     changePage(pageNo, bool, ...argv) {
