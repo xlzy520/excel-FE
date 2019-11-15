@@ -36,13 +36,12 @@ export default {
       tableColumns: [
         { label: '用户名', prop: 'username' },
         { label: '学校', prop: 'school' },
-        { label: '学段', prop: 'grade', formatter: row => {
-          return this.$enum.grade.find(v => row.grade === v.value).label
+        { label: '学段', prop: 'grade',width: 80, formatter: row => {
+          return this.$enum.gradeNotAll.find(v => row.grade === v.value).label
         } },
         { label: '手机', prop: 'phone' },
-        { label: '创建时间', prop: 'createDate' },
-        { label: '修改时间', prop: 'modifyDate' },
-        // { label: '备注', prop: 'mark' },
+        { label: '创建时间', prop: 'saveDate', width: 180, },
+        { label: '修改时间', prop: 'modifyDate',width: 180, },
         {
           label: '操作', prop: 'operation',
           render: (h, { props: { row }}) => {
@@ -80,7 +79,9 @@ export default {
     },
     delete(row) {
       this.$methods.tipBox(`确定删除该条内容吗？`, () => {
-        userManage.deleteUser(row.id).then(() => {
+        userManage.deleteUser({
+          userId: row.userId
+        }).then(() => {
           this.$message(`删除成功`)
           this.toSearch()
         })

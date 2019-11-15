@@ -3,10 +3,10 @@
              @close="close" @confirm="confirm">
     <div>
       <el-form ref="form" label-width="100px" :model="formData" :rules="rule">
-        <el-form-item label="项目名" prop="name">
+        <el-form-item label="项目名" prop="templateName">
           <el-input v-model="formData.name"></el-input>
         </el-form-item>
-        <el-form-item label="模板" prop="template">
+        <el-form-item label="模板" prop="fileUrl">
           <el-upload action="/excel/upload"
                      :on-success="uploadSuccess"
                      :on-error="uploadError"
@@ -41,7 +41,7 @@ export default {
         name: [
           this.$methods.required('请输入项目名')
         ],
-        template: [
+        fileUrl: [
           this.$methods.required('请上传文件')
         ],
         grade: [

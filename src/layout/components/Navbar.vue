@@ -32,23 +32,25 @@ export default {
     Hamburger,
     changePassword
   },
+  data() {
+    return {
+      visible: false
+    }
+  },
   computed: {
     ...mapGetters([
       'sidebar',
       'name'
     ])
   },
-  data() {
-    return {
-      visible: false
-    }
-  },
   methods: {
     handleDropDownCommand(cmd) {
       if (cmd === 'logout') this.logout()
       if (cmd === 'changePassword') {
         this.visible = true
-        this.$refs.dialog.open()
+        this.$nextTick(() => {
+          this.$refs.dialog.open()
+        })
       }
     },
     toggleSideBar() {

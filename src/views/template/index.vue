@@ -28,18 +28,17 @@ export default {
   data() {
     return {
       searchConfig: [
-        { label: '名称', key: 'name', type: 'input' },
-        { label: '学段', key: 'grade', type: 'select', attrs: { options: this.$enum.grade }}
+        { label: '名称', key: 'name', type: 'input' }
+        // { label: '学段', key: 'grade', type: 'select', attrs: { options: this.$enum.grade }}
       ],
       tableData: [],
       tableColumns: [
-        { label: '名称', prop: 'name' },
+        { label: '名称', prop: 'templateName' },
         { label: '学段', prop: 'grade', formatter: row => {
           return this.$enum.grade.find(v => row.grade === v.value).label
         } },
-        { label: '创建时间', prop: 'createDate' },
-        { label: '修改时间', prop: 'modifyDate' },
-        // { label: '备注', prop: 'mark' },
+        { label: '创建时间', prop: 'saveDate', width: 180 },
+        { label: '修改时间', prop: 'modifyDate', width: 180 },
         {
           label: '操作', prop: 'operation',
           render: (h, { props: { row }}) => {

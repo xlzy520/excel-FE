@@ -22,7 +22,7 @@ module.exports = {
     proxy: {
       [process.env.VUE_APP_BASE_API]: {
         // target: `http://localhost:8080/excel`,
-        target: ` http://localhost:3000/excel`,
+        target: ` http://localhost:8080/excel`,
         changeOrigin: true,
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: ''

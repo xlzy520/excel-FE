@@ -66,7 +66,7 @@ export default {
             rules: [this.$methods.required('请选择所属学段')]
           },
           attrs: {
-            options: this.$enum.grade
+            options: this.$enum.gradeNotAll
           }
         },
         {
@@ -102,7 +102,9 @@ export default {
         const post = this.dialogTypeIsAdd ? { request: userManage.addUser, msg: '添加' }
           : { request: userManage.updateUser, msg: '编辑' }
         post.request(this.formData).then(res => {
+          console.log(res);
           this.$message(post.msg + '成功')
+          this.$emit('confirm')
           this.close()
         }).finally(() => {
           this.loading = false

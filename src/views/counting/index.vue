@@ -29,10 +29,10 @@ export default {
       ],
       tableData: [],
       tableColumns: [
-        { label: '项目名称', prop: 'name' },
-        { label: '总人数', prop: 'total' },
-        { label: '创建时间', prop: 'createDate' },
-        { label: '修改时间', prop: 'modifyDate' },
+        { label: '项目名称', prop: 'templateName' },
+        { label: '总人数', prop: 'peopleCount' },
+        { label: '创建时间', prop: 'saveDate', width: 180 },
+        { label: '修改时间', prop: 'modifyDate', width: 180 },
         {
           label: '操作', prop: 'operation',
           render: (h, { props: { row }}) => {

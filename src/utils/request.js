@@ -36,10 +36,12 @@ service.interceptors.response.use(
           type: 'error',
           duration: 2000
         })
-        return Promise.reject(new Error(res.message || 'Error'))
+        return Promise.reject(new Error(res.msg || 'Error'))
       }
+    } else {
+      console.log(res);
+      return res.data
     }
-    return res.data
   },
   error => {
     console.log('err' + error) // for debug

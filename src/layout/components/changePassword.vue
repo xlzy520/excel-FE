@@ -1,7 +1,7 @@
 <template>
   <lz-dialog ref="dialog" :loading="loading" width="450px" title="修改密码"
              @close="close" @confirm="confirm">
-    <lz-form :form-data="formData" :form-options="formOptions" :column-num="1"></lz-form>
+    <lz-form ref="form" :form-data="formData" :form-options="formOptions" :column-num="1"></lz-form>
   </lz-dialog>
 </template>
 
@@ -17,7 +17,7 @@ export default {
         {
           type: 'input',
           formItem: {
-            prop: 'initPassword',
+            prop: 'password',
             label: '初始密码',
             rules: [
               this.$methods.required('请输入初始密码'),
@@ -59,7 +59,7 @@ export default {
     confirm() {
       this.$refs.form.validate(() => {
         this.loading = true
-        userApi.changePassword(this.formData).then(res => {
+        userApi.updatePassword(this.formData).then(res => {
           this.$message('修改密码成功')
           this.close()
         }).finally(() => {
