@@ -13,7 +13,8 @@
     </div>
     <h3>不符合要求的内容：</h3>
     <div class="upload-table">
-      <lz-table ref="table" :data="tableData" :columns="tableColumns">
+      <lz-table ref="table" :data="tableData" :columns="tableColumns" :cell-class-name="cellClassName"
+                :row-class-name="tableRowClassName">
         <div v-if="totalCount" slot="btn">
           <div>总条数： {{ totalCount }}</div>
           <div>失败条数： {{ errorCount }}</div>
@@ -45,12 +46,12 @@ export default {
         type: 'single',
         options: []
       },
-      errorCount: ''
+      errorCount: 0
     }
   },
   computed: {
     ...mapGetters([
-      'roleCode'
+      'roleCode', 'name'
     ]),
     totalCount() {
       return this.tableData.length
@@ -60,13 +61,27 @@ export default {
     this.getTemplateList()
   },
   methods: {
+    tableRowClassName({ row }) {
+      if (row.repeat || row.error) {
+        return 'warning-row'
+      }
+      return ''
+    },
+    cellClassName({ row, column, rowIndex, columnIndex }) {
+      if (row.error) {
+        if (rowIndex === row.errorIndex[0] && columnIndex === row.errorIndex[1]) {
+          return 'warning-cell'
+        }
+      }
+      return ''
+    },
     getTemplateList() {
       templateApi.getTemplateList({
         pageNo: 1,
         pageSize: 9999
       }).then(res => {
         this.templateConfig.options = res.list.map(v => {
-          return { label: v.name, value: v.id }
+          return { label: v.templateName, value: v.id, fileUrl: v.fileUrl }
         }) || []
       })
     },
@@ -75,11 +90,18 @@ export default {
         this.$message('请先选择模板项目', 'info')
         return false
       }
+      if (this.errorCount > 0) {
+        this.$message('该表格存在不符合规范的行', 'error')
+        return false
+      }
       studentsApi.addStudent({
         data: this.tableData,
-        template: this.template
+        templateId: this.template,
+        username: this.name
       }).then(res => {
         this.$message('上传成功')
+      }).catch((res) => {
+        this.tableData = res.data
       })
     },
     download() {
@@ -87,6 +109,8 @@ export default {
         this.$message('请先选择模板项目', 'info')
         return false
       }
+      const fileUrl = this.templateConfig.options.find(v => v.value === this.template).fileUrl
+      this.$methods.fileDownload('http://localhost:3000' + fileUrl)
     },
     beforeUpload(file) {
       const isLt1M = file.size / 1024 / 1024 < 5
@@ -100,7 +124,23 @@ export default {
       return false
     },
     handleSuccess(data) {
-      this.tableData = data.results
+      const { results, header } = data
+      results.map((v, index) => {
+        header.map((vh, indexVh) => {
+          if (!v[vh]) {
+            v.error = true
+          } else {
+            if (vh === '联系电话') {
+              v.error = !/^1[3456789]\d{9}$/.test(v[vh])
+              if (v.error) {
+                v.errorIndex = [index, indexVh]
+              }
+            }
+          }
+        })
+      })
+      this.errorCount = results.filter(v => v.error).length
+      this.tableData = results
       this.tableColumns = data.header.map(v => ({ prop: v, label: v }))
     }
   }
@@ -124,7 +164,18 @@ export default {
     color: #f35532;
   }
   &-table{
-
+    ::v-deep .el-table{
+      .warning-row {
+        background: #ce8777;
+        color: #fff;
+      }
+      .warning-cell{
+        color: #f3ff48;
+      }
+      tr.warning-row:hover>td {
+        background-color: initial;
+      }
+    }
   }
 }
 </style>
