@@ -4,10 +4,10 @@
     <div>
       <el-form ref="form" label-width="100px" :model="formData" :rules="rule">
         <el-form-item label="项目名" prop="templateName">
-          <el-input v-model="formData.name"></el-input>
+          <el-input v-model="formData.templateName"></el-input>
         </el-form-item>
         <el-form-item label="模板" prop="fileUrl">
-          <el-upload action="/excel/upload"
+          <el-upload ref="upload" action="/excel/upload"
                      :on-success="uploadSuccess"
                      :on-error="uploadError"
                      accept=".xls,.xlsx" :limit="1">
@@ -29,7 +29,7 @@ export default {
     return {
       loading: false,
       formData: {
-        template: ''
+        fileUrl: ''
       },
       gradeConfig: {
         key: 'single',
@@ -38,7 +38,7 @@ export default {
       },
       dialogTypeIsAdd: false,
       rule: {
-        name: [
+        templateName: [
           this.$methods.required('请输入项目名')
         ],
         fileUrl: [
@@ -51,13 +51,17 @@ export default {
     }
   },
   methods: {
-    uploadSuccess(res, file, fileList) {
-      this.$message('上传成功')
-      this.formData.template = res.data.url
+    uploadSuccess(res) {
+      if (res.success) {
+        this.formData.fileUrl = res.data.fileUrl
+        this.$message('上传成功')
+      } else {
+        this.$message('上传失败：' + res.msg, 'error')
+        this.$refs.upload.clearFiles()
+      }
     },
     uploadError(err, file, fileList) {
-      console.log(err)
-      this.$message('上传失败', 'error')
+      this.$message('上传失败' + JSON.stringify(err), 'error')
     },
     open(isAdd, row) {
       this.$refs.dialog.open()
@@ -71,9 +75,10 @@ export default {
         if (valid) {
           this.loading = true
           const post = this.dialogTypeIsAdd ? { request: templateApi.addTemplate, msg: '添加' }
-            : { request: templateApi.updateTemplate, msg: '重置' }
+            : { request: templateApi.updateTemplate, msg: '编辑' }
           post.request(this.formData).then(res => {
             this.$message(post.msg + '成功')
+            this.$emit('confirm')
             this.close()
           }).finally(() => {
             this.loading = false

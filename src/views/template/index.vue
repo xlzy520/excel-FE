@@ -78,14 +78,14 @@ export default {
     },
     delete(row) {
       this.$methods.tipBox(`确定删除该模板吗？`, () => {
-        templateApi.deleteTemplate(row.id).then(() => {
+        templateApi.deleteTemplate({id: row.id}).then(() => {
           this.$message(`删除成功`)
           this.toSearch()
         })
       })
     },
     download(row) {
-      this.$methods.fileDownload(row.url)
+      this.$methods.fileDownload('http://localhost:3000/' + row.fileUrl)
     },
     toSearch() {
       this.$refs.search.search()
