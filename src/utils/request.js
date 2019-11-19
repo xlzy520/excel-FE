@@ -36,7 +36,7 @@ service.interceptors.response.use(
           type: 'error',
           duration: 2000
         })
-        return Promise.reject(new Error(res.msg || 'Error'))
+        return Promise.reject(res)
       }
     } else {
       console.log(res);
