@@ -30,7 +30,7 @@ export default {
       tableData: [],
       tableColumns: [
         { label: '项目名称', prop: 'templateName' },
-        { label: '总人数', prop: 'peopleCount' },
+        { label: '总人数', prop: 'peopleCount', formatter: row => row.peopleCount ? row.peopleCount : '0' },
         { label: '创建时间', prop: 'saveDate', width: 180 },
         { label: '修改时间', prop: 'modifyDate', width: 180 },
         {

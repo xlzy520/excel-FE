@@ -69,7 +69,7 @@ export default {
               }
             }
           },
-          data: this.data.map(v => v.total)
+          data: this.data.map(v => v.peopleCount)
         }]
       })
     },
@@ -111,7 +111,7 @@ export default {
           selectedMode: 'single',
           data: this.data.map(v => {
             return {
-              value: v.total,
+              value: v.peopleCount,
               name: v.school
             }
           })

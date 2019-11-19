@@ -42,9 +42,7 @@ export default {
       chartData: [],
       tableColumns: [
         { label: '学校名称', prop: 'school' },
-        { label: '人数', prop: 'total' },
-        { label: '创建时间', prop: 'createDate' },
-        { label: '修改时间', prop: 'modifyDate' }
+        { label: '人数', prop: 'peopleCount' }
       ],
       total: 0,
       exportLoading: false,
@@ -52,13 +50,11 @@ export default {
       totalCount: 0
     }
   },
-  mounted() {
-    this.getList()
-  },
   methods: {
     open(row) {
       this.id = row.id
-      this.totalCount = row.total
+      this.totalCount = row.peopleCount
+      this.getList()
       this.$refs.dialog.open()
     },
     handleClick() {
@@ -75,7 +71,7 @@ export default {
     },
     getList(page) {
       this.loading = true
-      const post = { id: this.id, ...page }
+      const post = { templateId: this.id, ...page }
       countingApi.getCountingDetailById(post).then(res => {
         this.chartData = res.list || []
         this.total = res.total
