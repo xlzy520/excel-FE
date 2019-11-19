@@ -80,7 +80,7 @@ export default {
     delete(row) {
       this.$methods.tipBox(`确定删除该条内容吗？`, () => {
         userManage.deleteUser({
-          userId: row.userId
+          userId: row.id
         }).then(() => {
           this.$message(`删除成功`)
           this.toSearch()
