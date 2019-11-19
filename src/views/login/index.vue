@@ -41,8 +41,8 @@ export default {
     }
     return {
       loginForm: {
-        username: '123456',
-        password: '123456'
+        username: '13588043792',
+        password: 'admin123'
       },
       loginRules: {
         username: [this.$methods.required('用户名')],
